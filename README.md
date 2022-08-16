@@ -8,6 +8,7 @@ Python: 3.6.3 Anaconda 64-bit
 
 # About the data
 The data is from 'Telecom-Italia-Big-Data-Challenge'. 
+
 The original data source: https://dandelion.eu/datamine/open-big-data/
 # How to execute
 Every script can be executed indivdually. 
