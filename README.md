@@ -11,7 +11,7 @@ The data is from 'Telecom-Italia-Big-Data-Challenge'.
 
 The original data source: https://dandelion.eu/datamine/open-big-data/
 # How to execute
-Every script can be executed indivdually. 
+Every script can be executed indivdually. Download the code to your own computer, open the script, andn run.
 
 You can also adjust the parameter settings as needed.
 
