@@ -273,25 +273,9 @@ poolA = list()
 tempind = ind.copy()
 groupID = [45,46]
 
-
-#统计库大小
 #7000
 groupID = list(np.arange(21,96))
-#6000
-#groupID = list(np.arange(21,86))
-#5000
-#groupID = list(np.arange(21,75))
-#4000
-#groupID = list(np.arange(21,65))
-#3000
-#groupID = list(np.arange(21,55))
-#2000
-#groupID = list(np.arange(21,44))
 
-####1000
-groupID = list(np.arange(21,32))
-
-#
 delete_list = list([27,33,41,49,81,97])
 
 #testlist.remove([1,2])
@@ -330,18 +314,6 @@ PAdfs = calDataframeDFS(PAdf)
 print('PAdf got')
 
 
-'''font1 = {'family' : 'Times New Roman',
-'weight' : 'normal',
-'size'   : 18,
-}
-
-fontlabel = {'family' : 'Times New Roman',
-'weight' : 'normal',
-'size'   : 14,
-}
-'''
-
-
 font1 = {'family' : 'Times New Roman',
 'weight' : 'normal',
 'size'   : 20,
@@ -351,13 +323,6 @@ fontlabel = {'family' : 'Times New Roman',
 'weight' : 'normal',
 'size'   : 16,
 }
-
-
-
-'''
-Load group weight
-'''
-
 
 
 
@@ -372,11 +337,6 @@ for i in np.arange(0,len(groupID)):
 print('Weights loading complete')
 print('Number of model weights loaded: %d'%len(groupweight_loaded))
 
-
-'''
-KNN v2: 调整k的数量 section 1
-'''
-#def setweights2(model1=zeromodel, model2=zeromodel, model3=zeromodel0, model4=zeromodel, model5=zeromodel, model6=zeromodel, model7=zeromodel, model8=zeromodel, model9=zeromodel, model10=zeromodel, k=3):
 def setweights2(model1, model2, model3, model4, model5, model6, model7, model8, model9, model10, k=3):
 
     t = []
@@ -391,16 +351,8 @@ def setweights2(model1, model2, model3, model4, model5, model6, model7, model8, 
     wtlist8 = convertWeight(model8.get_weights())
     wtlist9 = convertWeight(model9.get_weights())
     wtlist10 = convertWeight(model10.get_weights())
-    #wtlist2 = convertWeight(model2.get_weights())
-    #wtlist3 = convertWeight(model3.get_weights())
+
     wtlist = (wtlist1 + wtlist2 + wtlist3 + wtlist4 + wtlist5 + wtlist6 + wtlist7 + wtlist8 + wtlist9 + wtlist10)/k
-    
-    #wl1 = wtlist[0:3*40].reshape(3,40)
-    #wl2 = wtlist[3*40:3*40+10*40].reshape(10,40)
-    #wl3 = wtlist[3*40+10*40:3*40+10*40+40].reshape(40,-1).flatten()
-    #wl4 = wtlist[3*40+10*40+40:3*40+10*40+40+10].reshape(10,1)
-    #wl5 = wtlist[3*40+10*40+40+10:].reshape(1,-1).flatten()
-    
     
     wl1 = wtlist[0:3*20].reshape(3,20)
     wl2 = wtlist[3*20:3*20+5*20].reshape(5,20)
@@ -472,9 +424,6 @@ def setzeroweights():
 
 
 
-
-
-
 zeromodel = initModel2(n_features =3, time_step =time_step)
 zeromodel_weights = setzeroweights()
 zeromodel.set_weights(zeromodel_weights)
@@ -508,22 +457,11 @@ def LSTMmt_bl(data3, sid ,initBLweights, time_step, epochs):
     ctt_generator_train = TimeseriesGenerator(ctt_train_X, ctt_train_y, length=time_step, batch_size=batch_size, shuffle=False)
     ctt_generator_test = TimeseriesGenerator(ctt_test_X, ctt_test_y, length=time_step, batch_size=batch_size, shuffle=False)
 
-
-    '''#Calculate running time
-    start1 = time.clock()
-    cttmodel, wt = LSTMm3(ctt_generator_train, n_features =3, time_step =time_step, epochs = epochs)
-    elapsed1 = (time.clock() - start1)
-    print("Time used (new trained):",elapsed1)'''
-
-
     #Calculate running time
     start1 = time.clock()
     blmodel, wt = LSTMm3_bl(ctt_generator_train, initBLweights, n_features =3, time_step =time_step, epochs = epochs)
     elapsed1 = (time.clock() - start1)
     print("Time used (BL updating):",elapsed1)
-
-
-
 
     #ctt_y_hat = cttmodel.predict_generator(ctt_generator_test)
     bl_y_hat = blmodel.predict(ctt_generator_test)
@@ -535,213 +473,25 @@ def LSTMmt_bl(data3, sid ,initBLweights, time_step, epochs):
     MAE_bl = mean_absolute_error(bl_y_hat, bl_y_true)
     print('MAE (function LSTMmt_bl): ',MAE_bl)
 
-    #画图
-    '''plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.plot(bl_y_true,'r:.',label = 'Ground truth (after tuning)',linewidth=2.5)
-    plt.plot(bl_y_hat,'cyan',label = '%d'%testID[testIDcounter],linewidth=2.5)
-    #plt.plot(ct3_y_hat,'g--',label = 'Stacked LSTM',linewidth=2.5)
-    plt.legend(prop = fontlabel)
-    plt.xlabel('Time (hour)',font1)
-    plt.ylabel('Traffic',font1)'''
-
-    '''
-    print('y_hat')
-    print(ctt_y_hat)
-    print('y_true')
-    print(np.array(ctt_generator_test.targets[time_step:]))
-    '''
-
-
-    #temp_ctt_y_hat = min_max_scaler.inverse_transform(np.array(ctt_y_hat).reshape(-1,1))
-    #ctt_y_hat = temp_ctt_y_hat.reshape(-1)
-    ##ctt_y_hat = min_max_scaler.inverse_transform()
-    '''temp_bl_y_hat = min_max_scaler.inverse_transform(np.array(bl_y_hat).reshape(-1,1))
-    bl_y_hat = temp_bl_y_hat.reshape(-1)
-
-    temp_ctt_y_true = min_max_scaler.inverse_transform((np.array(ctt_generator_test.targets[time_step:])).reshape(-1,1))
-    ctt_y_true = temp_ctt_y_true.reshape(-1)
-    temp_bl_y_true = min_max_scaler.inverse_transform((np.array(ctt_generator_test.targets[time_step:])).reshape(-1,1))
-    bl_y_true = temp_bl_y_true.reshape(-1)'''
-
-    '''
-    #tempMSE = np.sum(np.square(ctt_y_hat - ctt_y_true))/len(ctt_y_true)
-    tempMSE = mean_squared_error(ctt_y_hat, ctt_y_true)
-    print('cal MSE: %f'%tempMSE)
-    print('auto MSE: %f'%mean_squared_error(ctt_y_hat,ctt_y_true))
-    tempRMSE = np.sqrt(tempMSE)
-    tempR2 = r2_score(ctt_y_hat, ctt_y_true)
-    #tempMAE = np.sum(np.abs(ctt_y_hat - ctt_y_true))/len(ctt_y_true)
-    tempMAE = mean_absolute_error(ctt_y_hat, ctt_y_true)
-
-    #tempMSE_bl = np.sum(np.square(bl_y_hat - bl_y_true))/len(bl_y_true)
-    tempMSE_bl = mean_squared_error(bl_y_hat, bl_y_true)
-    tempRMSE_bl = np.sqrt(tempMSE_bl)
-    tempR2_bl = r2_score(bl_y_hat, bl_y_true)
-    #tempMAE_bl = np.sum(np.abs(bl_y_hat - bl_y_true))/len(bl_y_true)
-    tempMAE_bl = mean_absolute_error(bl_y_hat, bl_y_true)'''
-    
-
-
-    #print('Types of metrics:')
-    #print(cttmodel.history.history)
-
-    '''
-    #plot
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.plot(ctt_y_true,'k-',label = 'Ground truth',linewidth=2.5)
-    plt.plot(ctt_y_hat,'r-',label = 'Stacked LSTM',linewidth=2.5)
-    plt.xlabel('Time (Hour)',font1)
-    plt.ylabel('Traffic',font1)
-    plt.legend(prop = fontlabel)
-
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.plot(bl_y_true,'k-',label = 'Ground truth',linewidth=2.5)
-    plt.plot(bl_y_hat,'r-',label = 'MLCTPF',linewidth=2.5)
-    plt.xlabel('Time (Hour)',font1)
-    plt.ylabel('Traffic',font1)
-    plt.legend(prop = fontlabel)
-
-    error = ctt_y_hat - ctt_y_true
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.bar(np.arange(0,len(error)),error)
-    plt.xlabel('Time (Hour)',font1)
-    plt.ylabel('Error',font1)
-
-    error_bl = bl_y_hat - bl_y_true
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.bar(np.arange(0,len(error_bl)),error_bl)
-    plt.xlabel('Time (Hour)',font1)
-    plt.ylabel('Error',font1)
-
-    tempAbsMAE = np.abs(ctt_y_hat - ctt_y_true)
-    tempAbsMAE_plot = pd.Series(tempAbsMAE)
-
-    tempAbsMAE_bl = np.abs(bl_y_hat - bl_y_true)
-    tempAbsMAE_bl_plot = pd.Series(tempAbsMAE_bl)
-
-
-    '''
-    '''
-    print('tempAbsMAE length: %d'%len(tempAbsMAE_plot))
-    #tempAbsMAE_plot = tempAbsMAE_plot/len(tempAbsMAE_plot)
-    plt.figure()
-    #tempAbsMAE_plot.hist( bins=300, cumulative = 1, histtype='step' )
-    plt.hist(tempAbsMAE_plot, bins=300, cumulative = True, histtype='step')
-    plt.xlabel('Absolute error')
-    plt.ylabel('CDF')
-    '''
-    '''
-    
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    cdf = tempAbsMAE_plot.value_counts().sort_index().cumsum()/len(tempAbsMAE)
-    #cdf.plot(c='r',linestyle='--',marker='o',linewidth=2.5,label='Stacked LSTM')
-    cdf.plot(linewidth=2.5,label='Stacked LSTM')
-    cdf_bl = tempAbsMAE_bl_plot.value_counts().sort_index().cumsum()/len(tempAbsMAE_bl)
-    cdf_bl.plot(linewidth=2.5,label='MLCTPF')
-    plt.legend(prop = fontlabel)
-    plt.xlabel('Absolute error',font1)
-    plt.ylabel('CDF',font1)
-
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.plot(cttmodel.history.history['loss'],label = 'Stacked LSTM',linewidth=2.5)
-    plt.plot(blmodel.history.history['loss'],label = 'MLCTPF',linewidth=2.5)
-    plt.legend(prop = fontlabel)
-    plt.xlabel('epochs',font1)
-    #plt.ylabel('Loss',font1)
-    plt.ylabel('MAE (normalised)',font1)
-
-
-    plt.figure()
-    plt.tick_params(labelsize=15)
-    plt.plot(cttmodel.history.history['val_loss'],label = 'Stacked LSTM',linewidth=2.5)
-    plt.plot(blmodel.history.history['val_loss'],label = 'MLCTPF',linewidth=2.5)
-    plt.legend(prop = fontlabel)
-    plt.xlabel('epochs',font1)
-    plt.ylabel('Validation loss',font1)
-
-'''
-    #return wt, cttmodel, tempMSE, tempRMSE, tempR2, tempMAE, tempMSE_bl, tempRMSE_bl, tempR2_bl, tempMAE_bl
     return blmodel, RMSE_bl, R2_bl
 
-
-'''
-KNN v2: 调整k的数量 section 3， 更新模型
-'''
-k=10
+k=12
 
 os.chdir("/content/gdrive/My Drive/Milan/models_evaluation_v2")
 
 
-
-
-'''
-TestID 新的待训练cell的ID
-'''
 #For Twitter/SMS Guangzhou data, lentrain = 168
 #lentrain = 168
 #lentrain = 168*5
 time_step = 3
 batch_size = 16
-#%%
 retrain_epoch = 150
 
-
-#%% 计算最近的k个，并提取所预测的label对应cell id
-#设置testID设置
 testID = [1684,1884,7121]
-#testID = [10002]
-#testID = [1684,1884]
-#testID = ind[0,0:10]
-#testID = ind[1,10:20]
-#testID = ind[1,20:35]
-#testID = ind[1,20:40]
-#testID = ind[1,20:50]
-#testID = [10004]
-#testID = [1684,1884]
-testID = ind[0,:]
-#testID = ind[6,:]
 
 print('Test IDs:', testID)
-'''
-#testID.sort()
-poolTestdf = pd.DataFrame(data=None)
-for i in testID:
-    temp = df[df.sqID==i].traffic
-#    temp = np.array(df[df.sqID==i].traffic)
-#    print(temp.head(2))
-    poolTestdf['%d'%i] = np.array(temp)
-
-testDFS = calDataframeDFS(poolTestdf)
-#pred = knn.predict(testDFS)
-'''
-
-
 
 testdf = pd.DataFrame(data=None)
-
-#考虑SMS Twitter数据时
-'''
-for i in testID:
-  if i == 10001:
-    temp = twitterdata.traffic
-  elif i == 10002:
-    temp = smsdata.traffic
-  elif i == 10004:
-    temp = twitterLondondata.traffic
-  else:
-    temp = df_1[df_1.sqID==i].traffic
-    if len(temp)!=1176:
-      #cell_missing.append(i)
-      temp = np.lib.pad(temp,(0,1176-len(temp)),'constant',constant_values=(0, 0))
-  testdf['%d'%i] = np.array(temp)
-'''
 
 for i in testID:
 
@@ -755,9 +505,6 @@ for i in testID:
 poolTestdf = testdf
 
 testDFS = calDataframeDFS(poolTestdf)
-
-
-#%% KNN classifier 不再考虑标签，这部分暂时修改为下下部分
 label_A = np.zeros(len(PAdfs))
 
 #all_id = np.concatenate((poolA,poolB,poolC),axis = 0)
@@ -768,8 +515,6 @@ all_id = poolA
 dataX = PAdfs
 dataY = label_A
 
-#x_train,x_test,y_train,y_test=train_test_split(dataX,dataY)
-#x_train,x_test,y_train,y_test=train_test_split(dataX,dataY,test_size=0.3, random_state=42)
 x_train,y_train=dataX,dataY
 x_test,y_test=dataX,dataY
 
@@ -785,16 +530,12 @@ RMSE_vector = []
 MAE_vector = []
 R2_vector = []
 R22_vector = []
-K_list = [1,3,5,7,9]
-#K_list = [1,3]
-#K_list = np.arange(11,17)
-#K_list = [4]
+K_list = [12]
+
 K_list = np.arange(1,17)
-#K_list = [10]
 
 lentrain_list = [168,168*2,168*3,168*4,168*5]
 lentrain_list = [168*5]
-#lentrain_list = [168]
 
 
 for k in K_list:
@@ -886,12 +627,7 @@ for k in K_list:
       temp_MAE = MAE_bl_ind[np.argmin(MAE_bl_ind)]
       temp_R2 = R2_bl_ind[np.argmin(RMSE_bl_ind)]
       temp_R22 = R2_bl_ind[np.argmax(R2_bl_ind)]
-      
 
-      '''
-      #更新模型
-
-      #Load best model
       load_id = int(id_index[np.argmin(RMSE_bl_ind)])
       
       bl_model_load = load_model(r'%s.h5' %load_id)
@@ -899,8 +635,6 @@ for k in K_list:
       bl_model_load_weights = bl_model_load.get_weights()
       print('Model fine tuning...')
       ct2model, temp_RMSE, temp_R2 = LSTMmt_bl(data3, testID[testIDcounter] ,initBLweights = bl_model_load_weights, time_step =time_step, epochs = retrain_epoch)
-      '''
-
       RMSE.extend([temp_RMSE])
       MAE.extend([temp_MAE])
       R2.extend([temp_R2])
@@ -927,12 +661,6 @@ for k in K_list:
     temp_RMSE = np.sqrt(temp_MSE)
 
     testIDcounter = testIDcounter+1
-
-
-  #print('MSE:')
-  #print(MSE)
-  #print('Mean MSE:')
-  #print(np.mean(MSE))
 
   print('RMSE:')
   print(RMSE)
